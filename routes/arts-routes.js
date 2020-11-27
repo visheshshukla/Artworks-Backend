@@ -36,4 +36,13 @@ router.get('/:aid', (req, res, next) => {
   });
   res.json({art});
 });
+
+router.get('/user/:uid', (req, res, next) => {
+  const userId = req.params.uid;
+  const art = DUMMY_ARTS.find(a => {
+    return a.creator === userId;
+  });
+  res.json({ art });
+});
+
 module.exports = router;
