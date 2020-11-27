@@ -5,6 +5,6 @@ const artsRoutes = require('./routes/arts-routes');
 
 const app = express();
 
-app.use(artsRoutes);
+app.use('/api/arts', artsRoutes);
 
 app.listen(5000);
