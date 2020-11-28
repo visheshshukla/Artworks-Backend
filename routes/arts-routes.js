@@ -34,6 +34,11 @@ router.get('/:aid', (req, res, next) => {
   const art = DUMMY_ARTS.find(a => {
     return a.id === artId;
   });
+  if (!art) {
+    const error = new Error('Could not find art for the provided id.');
+    error.code = 404;
+    throw error;
+  }
   res.json({art});
 });
 
@@ -42,6 +47,11 @@ router.get('/user/:uid', (req, res, next) => {
   const art = DUMMY_ARTS.find(a => {
     return a.creator === userId;
   });
+  if (!art) {
+    const error = new Error('Could not find art for the provided user id.');
+    error.code = 404;
+    return next(error);
+  }
   res.json({ art });
 });
 
