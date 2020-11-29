@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const HttpError = require('../models/http-error');
 
 const DUMMY_ARTS = [
@@ -49,5 +51,22 @@ const DUMMY_ARTS = [
     res.json({ art });
   }
 
+  const createArt = (req, res, next) => {
+    const { title, description, coordinates, address, creator } = req.body;
+    const createdArt = {
+      id: uuidv4(),
+      title,
+      description,
+      location: coordinates,
+      address,
+      creator
+    };
+
+    DUMMY_ARTS.push(createdArt);
+  
+    res.status(201).json({art: createdArt});
+  };
+
 exports.getArtById = getArtById;
 exports.getArtByUserId = getArtByUserId;
+exports.createArt = createArt;
