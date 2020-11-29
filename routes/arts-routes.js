@@ -8,4 +8,6 @@ router.get('/:aid', artsControllers.getArtById);
 
 router.get('/user/:uid', artsControllers.getArtByUserId);
 
+router.post('/', artsControllers.createArt);
+
 module.exports = router;
