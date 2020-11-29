@@ -5,6 +5,8 @@ const artsRoutes = require('./routes/arts-routes');
 
 const app = express();
 
+app.use(bodyParser.json());
+
 app.use('/api/arts', artsRoutes);
 
 app.use((error, req, res, next) => {
