@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const HttpError = require('../models/http-error');
 
-const DUMMY_ARTS = [
+let DUMMY_ARTS = [
     {
       id: 'p1',
       title: 'Art 1',
@@ -67,6 +67,21 @@ const DUMMY_ARTS = [
     res.status(201).json({art: createdArt});
   };
 
+  const updateArt = (req, res, next) => {
+    const { title, description } = req.body;
+    const artId = req.params.pid;
+  
+    const updatedArt = { ...DUMMY_ARTS.find(p => p.id === artId) };
+    const artIndex = DUMMY_ARTS.findIndex(p => p.id === artId);
+    updatedArt.title = title;
+    updatedArt.description = description;
+  
+    DUMMY_ARTS[artIndex] = updatedArt;
+  
+    res.status(200).json({art: updatedArt});
+  };
+
 exports.getArtById = getArtById;
 exports.getArtByUserId = getArtByUserId;
 exports.createArt = createArt;
+exports.updateArt = updateArt;
