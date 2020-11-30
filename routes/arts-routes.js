@@ -10,4 +10,6 @@ router.get('/user/:uid', artsControllers.getArtByUserId);
 
 router.post('/', artsControllers.createArt);
 
+router.patch('/:pid', artsControllers.updateArt);
+
 module.exports = router;
