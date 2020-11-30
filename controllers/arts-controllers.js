@@ -81,7 +81,14 @@ let DUMMY_ARTS = [
     res.status(200).json({art: updatedArt});
   };
 
+  const deleteArt = (req, res, next) => {
+    const artId = req.params.pid;
+    DUMMY_ARTS = DUMMY_ARTS.filter(p => p.id !== artId);
+    res.status(200).json({ message: 'Deleted Art.' });
+  };
+  
 exports.getArtById = getArtById;
 exports.getArtByUserId = getArtByUserId;
 exports.createArt = createArt;
 exports.updateArt = updateArt;
+exports.deleteArt = deleteArt;
