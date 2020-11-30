@@ -12,4 +12,6 @@ router.post('/', artsControllers.createArt);
 
 router.patch('/:pid', artsControllers.updateArt);
 
+router.delete('/:pid', artsControllers.deleteArt);
+
 module.exports = router;
