@@ -40,15 +40,15 @@ let DUMMY_ARTS = [
     res.json({ art });
   }
 
-  const getArtByUserId = (req, res, next) => {
+  const getArtsByUserId = (req, res, next) => {
     const userId = req.params.uid;
-    const art = DUMMY_ARTS.find(a => {
+    const arts = DUMMY_ARTS.filter(a => {
       return a.creator === userId;
     });
-    if (!art) {
-      throw new HttpError('Could not find art for the provided User Id.', 404);
+    if (!arts || arts.length === 0) {
+      throw new HttpError('Could not find arts for the provided User Id.', 404);
     }
-    res.json({ art });
+    res.json({ arts });
   }
 
   const createArt = (req, res, next) => {
@@ -88,7 +88,7 @@ let DUMMY_ARTS = [
   };
   
 exports.getArtById = getArtById;
-exports.getArtByUserId = getArtByUserId;
+exports.getArtsByUserId = getArtsByUserId;
 exports.createArt = createArt;
 exports.updateArt = updateArt;
 exports.deleteArt = deleteArt;
