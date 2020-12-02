@@ -6,7 +6,7 @@ const artsControllers = require('../controllers/arts-controllers');
 
 router.get('/:aid', artsControllers.getArtById);
 
-router.get('/user/:uid', artsControllers.getArtByUserId);
+router.get('/user/:uid', artsControllers.getArtsByUserId);
 
 router.post('/', artsControllers.createArt);
 
