@@ -1,4 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
+const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 
@@ -52,7 +53,13 @@ let DUMMY_ARTS = [
   }
 
   const createArt = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new HttpError('Invalid inputs passed, please check your data.', 422);
+    }
+
     const { title, description, coordinates, address, creator } = req.body;
+
     const createdArt = {
       id: uuidv4(),
       title,
@@ -68,6 +75,11 @@ let DUMMY_ARTS = [
   };
 
   const updateArt = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      throw new HttpError('Invalid inputs passed, please check your data.', 422);
+    }
+
     const { title, description } = req.body;
     const artId = req.params.pid;
   
@@ -83,6 +95,9 @@ let DUMMY_ARTS = [
 
   const deleteArt = (req, res, next) => {
     const artId = req.params.pid;
+    if (!DUMMY_PLACES.find(p => p.id === placeId)) {
+      throw new HttpError('Could not find a place for that id.', 404);
+    }
     DUMMY_ARTS = DUMMY_ARTS.filter(p => p.id !== artId);
     res.status(200).json({ message: 'Deleted Art.' });
   };
