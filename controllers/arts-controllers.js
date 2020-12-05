@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
+const getCoordsForAddress = require('../util/location');
 
 let DUMMY_ARTS = [
     {
@@ -52,13 +53,20 @@ let DUMMY_ARTS = [
     res.json({ arts });
   }
 
-  const createArt = (req, res, next) => {
+  const createArt = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      throw new HttpError('Invalid inputs passed, please check your data.', 422);
+      return next (new HttpError('Invalid inputs passed, please check your data.', 422));
     }
 
-    const { title, description, coordinates, address, creator } = req.body;
+    const { title, description, address, creator } = req.body;
+
+    let coordinates;
+    try {
+      coordinates = await getCoordsForAddress(address);
+    } catch (error) {
+      return next(error);
+    }
 
     const createdArt = {
       id: uuidv4(),
