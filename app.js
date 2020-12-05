@@ -1,6 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const artsRoutes = require('./routes/arts-routes');
 const usersRoutes = require('./routes/users-routes');
 const HttpError = require('./models/http-error');
