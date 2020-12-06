@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
+const Art = require('../models/art');
 
 let DUMMY_ARTS = [
     {
@@ -68,16 +69,24 @@ let DUMMY_ARTS = [
       return next(error);
     }
 
-    const createdArt = {
-      id: uuidv4(),
+    const createdArt = new Art({
       title,
       description,
-      location: coordinates,
       address,
+      location: coordinates,
+      image: 'https://res.cloudinary.com/vishesh123/image/upload/v1598877183/m18lqtmbvsvrqswlcmmj.jpg',
       creator
-    };
-
-    DUMMY_ARTS.push(createdArt);
+    });
+  
+    try {
+      await createdArt.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Creating art failed, please try again.',
+        500
+      );
+      return next(error);
+    }
   
     res.status(201).json({art: createdArt});
   };
