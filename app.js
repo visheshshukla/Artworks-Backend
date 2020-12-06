@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -29,4 +30,13 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
   });
 
-app.listen(5000);
+  mongoose.connect(`mongodb+srv://Admin:${process.env.MONGO}@cluster.ilj5v.mongodb.net/Artworks?retryWrites=true&w=majority`,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false })
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
