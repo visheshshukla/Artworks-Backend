@@ -110,7 +110,7 @@ let DUMMY_ARTS = [
     res.status(201).json({art: createdArt});
   };
 
-  const updateArt = (req, res, next) => {
+  const updateArt = async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       throw new HttpError('Invalid inputs passed, please check your data.', 422);
@@ -118,15 +118,32 @@ let DUMMY_ARTS = [
 
     const { title, description } = req.body;
     const artId = req.params.pid;
+    
+    let art;
+    try {
+      art = await Art.findById(artId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update art.',
+        500
+      );
+      return next(error);
+    }
   
-    const updatedArt = { ...DUMMY_ARTS.find(p => p.id === artId) };
-    const artIndex = DUMMY_ARTS.findIndex(p => p.id === artId);
-    updatedArt.title = title;
-    updatedArt.description = description;
+    art.title = title;
+    art.description = description;
   
-    DUMMY_ARTS[artIndex] = updatedArt;
+    try {
+      await art.save();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not update art.',
+        500
+      );
+      return next(error);
+    }
   
-    res.status(200).json({art: updatedArt});
+    res.status(200).json({ art: art.toObject({ getters: true }) });
   };
 
   const deleteArt = (req, res, next) => {
