@@ -51,15 +51,26 @@ let DUMMY_ARTS = [
     res.json({ art: art.toObject({ getters: true }) });
   }
 
-  const getArtsByUserId = (req, res, next) => {
+  const getArtsByUserId = async(req, res, next) => {
     const userId = req.params.uid;
-    const arts = DUMMY_ARTS.filter(a => {
-      return a.creator === userId;
-    });
-    if (!arts || arts.length === 0) {
-      throw new HttpError('Could not find arts for the provided User Id.', 404);
+
+    let arts;
+    try {
+      arts = await Art.find({ creator: userId });
+    } catch (err) {
+      const error = new HttpError(
+        'Fetching arts failed, please try again later',
+        500
+      );
+      return next(error);
     }
-    res.json({ arts });
+
+    if (!arts || arts.length === 0) {
+      return next(
+      new HttpError('Could not find arts for the provided User Id.', 404)
+      );
+    }
+    res.json({ arts: arts.map(art => art.toObject({ getters: true })) });
   }
 
   const createArt = async (req, res, next) => {
