@@ -146,12 +146,30 @@ let DUMMY_ARTS = [
     res.status(200).json({ art: art.toObject({ getters: true }) });
   };
 
-  const deleteArt = (req, res, next) => {
+  const deleteArt = async(req, res, next) => {
     const artId = req.params.pid;
-    if (!DUMMY_PLACES.find(p => p.id === placeId)) {
-      throw new HttpError('Could not find a place for that id.', 404);
+    
+    let art;
+    try {
+      art = await Art.findById(artId);
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not delete art.',
+        500
+      );
+      return next(error);
     }
-    DUMMY_ARTS = DUMMY_ARTS.filter(p => p.id !== artId);
+  
+    try {
+      await art.remove();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not delete art.',
+        500
+      );
+      return next(error);
+    }
+
     res.status(200).json({ message: 'Deleted Art.' });
   };
   
