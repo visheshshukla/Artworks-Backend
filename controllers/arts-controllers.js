@@ -32,15 +32,23 @@ let DUMMY_ARTS = [
     }
   ];
 
-  const getArtById = (req, res, next) => {
+  const getArtById = async(req, res, next) => {
     const artId = req.params.aid; 
-    const art = DUMMY_ARTS.find(a => {
-      return a.id === artId;
-    });
-    if (!art) {
-      throw new HttpError('Could not find art for the provided Art Id.', 404);
+
+    let art;
+    try {
+      art = await Art.findById(artId);
+    } catch (err) {
+      const error = new HttpError(
+        'Fetching art failed, please try again later',
+        500
+      );
+      return next(error);
     }
-    res.json({ art });
+    if (!art) {
+      throw new HttpError('Could not find art for the provided Id.', 404);
+    }
+    res.json({ art: art.toObject({ getters: true }) });
   }
 
   const getArtsByUserId = (req, res, next) => {
