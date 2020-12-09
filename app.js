@@ -32,6 +32,7 @@ app.use((error, req, res, next) => {
 
   mongoose.connect(`mongodb+srv://Admin:${process.env.MONGO}@cluster.ilj5v.mongodb.net/Artworks?retryWrites=true&w=majority`,{
     useNewUrlParser: true,
+    useCreateIndex: true,
     useUnifiedTopology: true,
     useFindAndModify: false })
   .then(() => {
