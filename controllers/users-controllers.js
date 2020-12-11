@@ -25,7 +25,7 @@ const signup = async (req, res, next) => {
       new HttpError('Invalid inputs passed, please check your data.', 422)
     );
   }
-  const { name, email, password, arts } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser
   try {
@@ -51,7 +51,7 @@ const signup = async (req, res, next) => {
     email,
     image: 'https://res.cloudinary.com/vishesh123/image/upload/v1589820758/avatar_ncyywy.png',
     password,
-    arts
+    arts: []
   });
 
   try {
