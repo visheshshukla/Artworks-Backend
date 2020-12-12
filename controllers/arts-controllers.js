@@ -1,9 +1,10 @@
-const { v4: uuidv4 } = require('uuid');
 const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 
 const HttpError = require('../models/http-error');
 const getCoordsForAddress = require('../util/location');
 const Art = require('../models/art');
+const User = require('../models/user');
 
   const getArtById = async(req, res, next) => {
     const artId = req.params.aid; 
@@ -69,9 +70,32 @@ const Art = require('../models/art');
       image: 'https://res.cloudinary.com/vishesh123/image/upload/v1598877183/m18lqtmbvsvrqswlcmmj.jpg',
       creator
     });
+
+    let user;
+
+    try {
+      user = await User.findById(creator);
+
+    } catch (err) {
+      const error = new HttpError(
+        'Creating art failed, please try again',
+        500
+      );
+      return next(error);
+    }
+
+    if(!user) {
+      const error = new HttpError('Could not find user for the provided Id', 404);
+      return next(error);
+    }
   
     try {
-      await createdArt.save();
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await createdArt.save( { session: sess });
+      user.arts.push( createdArt );
+      await user.save({ session: sess });
+      await sess.commitTransaction();
     } catch (err) {
       const error = new HttpError(
         'Creating art failed, please try again.',
