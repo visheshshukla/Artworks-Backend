@@ -20,7 +20,9 @@ const User = require('../models/user');
       return next(error);
     }
     if (!art) {
-      throw new HttpError('Could not find art for the provided Id.', 404);
+      return next(
+      new HttpError('Could not find art for the provided Id.', 404)
+      );
     }
     res.json({ art: art.toObject({ getters: true }) });
   }
@@ -28,9 +30,9 @@ const User = require('../models/user');
   const getArtsByUserId = async(req, res, next) => {
     const userId = req.params.uid;
 
-    let arts;
+    let userWithArts
     try {
-      arts = await Art.find({ creator: userId });
+      userWithArts = await User.findById(userId).populate('arts');
     } catch (err) {
       const error = new HttpError(
         'Fetching arts failed, please try again later',
@@ -39,12 +41,12 @@ const User = require('../models/user');
       return next(error);
     }
 
-    if (!arts || arts.length === 0) {
+    if (!userWithArts || userWithArts.arts.length === 0) {
       return next(
       new HttpError('Could not find arts for the provided User Id.', 404)
       );
     }
-    res.json({ arts: arts.map(art => art.toObject({ getters: true })) });
+    res.json({ arts: userWithArts.arts.map(art => art.toObject({ getters: true })) });
   }
 
   const createArt = async (req, res, next) => {
