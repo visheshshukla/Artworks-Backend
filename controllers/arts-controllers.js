@@ -150,17 +150,7 @@ const User = require('../models/user');
     
     let art;
     try {
-      art = await Art.findById(artId);
-    } catch (err) {
-      const error = new HttpError(
-        'Something went wrong, could not delete art.',
-        500
-      );
-      return next(error);
-    }
-  
-    try {
-      await art.remove();
+      art = await Art.findById(artId).populate('creator');
     } catch (err) {
       const error = new HttpError(
         'Something went wrong, could not delete art.',
@@ -169,7 +159,27 @@ const User = require('../models/user');
       return next(error);
     }
 
-    res.status(200).json({ message: 'Deleted Art.' });
+    if (!art) {
+      const error = new HttpError('Could not find art for this ID.',404);
+      return next(error);
+    }
+  
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+      await art.remove({ session: sess });
+      art.creator.arts.pull( art );
+      await art.creator.save({ session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      const error = new HttpError(
+        'Something went wrong, could not delete art.',
+        500
+      );
+      return next(error);
+    }
+
+    res.status(200).json({ message: 'Deleted art.' });
   };
   
 exports.getArtById = getArtById;
