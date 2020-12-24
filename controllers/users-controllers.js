@@ -48,7 +48,7 @@ const signup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image: 'https://res.cloudinary.com/vishesh123/image/upload/v1589820758/avatar_ncyywy.png',
+    image: req.file.path,
     password,
     arts: []
   });
