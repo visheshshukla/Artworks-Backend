@@ -4,6 +4,7 @@ const { check } = require('express-validator');
 const router = express.Router();
 
 const artsControllers = require('../controllers/arts-controllers');
+const fileUpload = require('../middleware/file-upload');
 
 router.get('/:aid', artsControllers.getArtById);
 
@@ -11,6 +12,7 @@ router.get('/user/:uid', artsControllers.getArtsByUserId);
 
 router.post(
     '/',
+    fileUpload.single('image'),
     [
       check('title')
         .not()
