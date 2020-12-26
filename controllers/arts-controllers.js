@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -69,7 +70,7 @@ const User = require('../models/user');
       description,
       address,
       location: coordinates,
-      image: 'https://res.cloudinary.com/vishesh123/image/upload/v1598877183/m18lqtmbvsvrqswlcmmj.jpg',
+      image: req.file.path,
       creator
     });
 
@@ -165,6 +166,8 @@ const User = require('../models/user');
       const error = new HttpError('Could not find art for this ID.',404);
       return next(error);
     }
+
+    const imagePath = art.image;
   
     try {
       const sess = await mongoose.startSession();
@@ -180,6 +183,13 @@ const User = require('../models/user');
       );
       return next(error);
     }
+
+    fs.unlink(imagePath,err => {
+      if(err!=null)
+      {
+        console.log(err);
+      }
+    });
 
     res.status(200).json({ message: 'Deleted art.' });
   };
