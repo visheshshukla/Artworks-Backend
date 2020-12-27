@@ -95,7 +95,7 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({user: createdUser.id, email: createdUser.email, token:token});
+  res.status(201).json({userId: createdUser.id, email: createdUser.email, token: token});
 };
 
 const login = async (req, res, next) => {
@@ -144,7 +144,7 @@ const login = async (req, res, next) => {
   try {
     token = jwt.sign(
       {
-        userId: existingdUser.id,   //id given by mongoDB
+        userId: existingUser.id,   //id given by mongoDB
         email: existingUser.email
       },
       'very_secret_key',
@@ -158,7 +158,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({user: existingUser.id, email: existingUser.email, token:token});
+  res.status(201).json({userId: existingUser.id, email: existingUser.email, token: token});
 };
 
 exports.getUsers = getUsers;
