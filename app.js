@@ -47,13 +47,13 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
   });
 
-  mongoose.connect(`mongodb+srv://Admin:${process.env.MONGO}@cluster.ilj5v.mongodb.net/Artworks?retryWrites=true&w=majority`,{
+  mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster.ilj5v.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,{
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
     useFindAndModify: false })
   .then(() => {
-    app.listen(5000);
+    app.listen( process.env.PORT || 5000 );
   })
   .catch(err => {
     console.log(err);
