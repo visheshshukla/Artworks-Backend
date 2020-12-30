@@ -56,7 +56,7 @@ const User = require('../models/user');
       return next (new HttpError('Invalid inputs passed, please check your data.', 422));
     }
 
-    const { title, description, address, creator } = req.body;
+    const { title, description, address } = req.body;
 
     let coordinates;
     try {
@@ -71,14 +71,13 @@ const User = require('../models/user');
       address,
       location: coordinates,
       image: req.file.path,
-      creator
+      creator: req.userData.userId
     });
 
     let user;
 
     try {
-      user = await User.findById(creator);
-
+      user = await User.findById(req.userData.userId);
     } catch (err) {
       const error = new HttpError(
         'Creating art failed, please try again',
@@ -131,6 +130,14 @@ const User = require('../models/user');
       );
       return next(error);
     }
+
+    if(art.creator.toString() !== req.userData.userId){
+      const error = new HttpError(
+        'You are not allowed to update this art.',
+        401
+      );
+      return next(error);
+    }
   
     art.title = title;
     art.description = description;
@@ -164,6 +171,14 @@ const User = require('../models/user');
 
     if (!art) {
       const error = new HttpError('Could not find art for this ID.',404);
+      return next(error);
+    }
+
+    if(art.creator.id !== req.userData.userId){
+      const error = new HttpError(
+        'You are not allowed to delete this art.',
+        401
+      );
       return next(error);
     }
 
