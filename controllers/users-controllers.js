@@ -84,7 +84,7 @@ const signup = async (req, res, next) => {
         userId: createdUser.id,   //id given by mongoDB
         email: createdUser.email
       },
-      'very_secret_key',
+      `${process.env.JWT_KEY}`,
       { expiresIn: '1h' }
       );
   } catch (err) {
@@ -147,7 +147,7 @@ const login = async (req, res, next) => {
         userId: existingUser.id,   //id given by mongoDB
         email: existingUser.email
       },
-      'very_secret_key',
+      `${process.env.JWT_KEY}`,
       { expiresIn: '1h' }
       );
   } catch (err) {
