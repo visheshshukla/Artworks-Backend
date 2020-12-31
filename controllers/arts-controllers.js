@@ -42,7 +42,7 @@ const User = require('../models/user');
       return next(error);
     }
 
-    if (!userWithArts || userWithArts.arts.length === 0) {
+    if (!userWithArts) {
       return next(
       new HttpError('Could not find arts for the provided User Id.', 404)
       );
